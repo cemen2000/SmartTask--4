@@ -1,5 +1,7 @@
 <?php
 
+Namespace Classes;
+
 abstract class AbstractMain {
     protected function header(): void
     {

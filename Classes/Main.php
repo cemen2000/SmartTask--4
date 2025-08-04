@@ -1,6 +1,9 @@
 <?php
+
+Namespace Classes;
+
 require_once 'HeaderAndFooter.php';
-class MainPage extends AbstractMain
+class Main extends AbstractMain
 {
     public function renderContent() {
          require_once ("Body/fio.php");
@@ -9,7 +12,7 @@ class MainPage extends AbstractMain
          require_once ("Body/makeReview.php");
     }
 
-    public function renderPage() {
+    public function View() {
         $this->header();
         $this->renderContent();
         $this->footer();
