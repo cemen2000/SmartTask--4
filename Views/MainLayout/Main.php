@@ -1,6 +1,7 @@
 <?php
 namespace MainLayout;
 class Main {
+    // загрузка всего HTML контента требуемого на основной странице, формы с редактированием отзывов и пользователей открываются отдельно
     public function renderContent() {
         require_once "Views/MainLayout/header.php";
         require_once "Views/MainLayout/fio.php";

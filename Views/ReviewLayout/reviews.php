@@ -1,5 +1,4 @@
-<!-- Форма 3 Отзывы -->
-    <section id="reviews">
+  <section id="reviews">
       <form id="review-form">
           <h3>Отзывы</h3>
          <h5>Популярные отзывы наших клиентов</h5>

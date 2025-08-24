@@ -1,5 +1,6 @@
 <?php
-
+namespace Models;
+use mysqli;
 class Model {
     private $host = 'localhost';
     private $dbname = 'php_project';
@@ -16,38 +17,35 @@ class Model {
         }
     }
 
-    public function PostRequest() {
-        $data = json_decode(file_get_contents('php://input'), true);
+    public function PostRequest($name, $comment) {
 
-        if (!isset($data['name']) || !isset($data['comment'])) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Не указаны имя или отзыв']);
-            exit;
-        }
-
-        $name = $data['name'];
-        $comment = $data['comment'];
-
-        $sql = "INSERT INTO reviews (name, comment) VALUES (?, ?)";
-        $stmt = $this->conn->prepare($sql);
-
-        if (!$stmt) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => 'Ошибка подготовки запроса: ' . $this->conn->error]);
-            exit;
-        }
-
-        $stmt->bind_param("ss", $name, $comment);
-
-        if (!$stmt->execute()) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => 'Ошибка выполнения: ' . $stmt->error]);
-            exit;
-        }
-
-        $stmt->close();
-        echo json_encode(['success' => true]);
+    if (!$name || !$comment) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Не указаны имя или отзыв']);
+        exit;
     }
+
+    $sql = "INSERT INTO reviews (name, comment) VALUES (?, ?)";
+    $stmt = $this->conn->prepare($sql);
+
+    if (!$stmt) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Ошибка подготовки запроса: ' . $this->conn->error]);
+        exit;
+    }
+
+    $stmt->bind_param("ss", $name, $comment);
+
+    if (!$stmt->execute()) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Ошибка выполнения: ' . $stmt->error]);
+        exit;
+    }
+
+    $stmt->close();
+    echo json_encode(['success' => true]);
+    exit;
+}
 
     public function GetRequest() {
         $sql = "SELECT id, name, comment FROM reviews";
@@ -66,6 +64,7 @@ class Model {
 
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'reviews' => $reviews], JSON_UNESCAPED_UNICODE);
+        exit;
     }
 
   public function getOne($id) {
@@ -83,6 +82,7 @@ class Model {
 
     $review = $result->fetch_assoc();
     echo json_encode(['success' => true, 'review' => $review]);
+    exit;
 }
 
     public function update($id, $name, $comment) {
@@ -93,9 +93,11 @@ class Model {
 
         if ($stmt->affected_rows > 0) {
             echo json_encode(['success' => true]);
+            exit;
         } else {
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Не удалось обновить']);
+            exit;
         }
     }
 
@@ -107,9 +109,11 @@ class Model {
 
         if ($stmt->affected_rows > 0) {
             echo json_encode(['success' => true]);
+            exit;
         } else {
             http_response_code(404);
             echo json_encode(['success' => false, 'error' => 'Отзыв не найден']);
+            exit;
         }
     }
 
@@ -129,6 +133,7 @@ class Model {
         }
 
         echo json_encode(['success' => true, 'users' => $users]);
+        exit;
     }
 
    public function getUser($id) {
@@ -146,6 +151,7 @@ class Model {
 
     $user = $result->fetch_assoc();
     echo json_encode(['success' => true, 'user' => $user]);
+    exit;
 }
 
     public function createUser($name, $surname, $email, $message) {
@@ -156,9 +162,11 @@ class Model {
 
         if ($stmt->affected_rows > 0) {
             echo json_encode(['success' => true]);
+            exit;
         } else {
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Ошибка добавления']);
+            exit;
         }
     }
 
@@ -170,9 +178,11 @@ class Model {
 
         if ($stmt->affected_rows > 0) {
             echo json_encode(['success' => true]);
+            exit;
         } else {
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Не удалось обновить']);
+            exit;
         }
     }
 
@@ -184,9 +194,11 @@ class Model {
 
         if ($stmt->affected_rows > 0) {
             echo json_encode(['success' => true]);
+            exit;
         } else {
             http_response_code(404);
             echo json_encode(['success' => false, 'error' => 'Пользователь не найден']);
+            exit;
         }
     }
 }

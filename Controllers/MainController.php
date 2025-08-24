@@ -1,6 +1,9 @@
 <?php
-require_once 'Controllers/UserController.php';
+namespace Controllers;
+use Controllers\UserController;
+use Controllers\ReviewController;
 require_once 'Controllers/ReviewController.php';
+require_once 'Controllers/UserController.php';
 
 class MainController {
     public function handleRequest() {
@@ -10,11 +13,11 @@ class MainController {
 
         switch ($action) {
             //Пользователи
-            case 'getUsers':
+            case 'getUsers': //Получение всех пользователей
                 (new UserController())->getUsers();
                 break;
 
-            case 'getUser':
+            case 'getUser': //Получение одного пользователя по айди
                 $id = $_GET['id'] ?? null;
                 if (!$id || !is_numeric($id)) {
                     $this->error(400, 'Неверный ID');
@@ -23,7 +26,7 @@ class MainController {
                 (new UserController())->getUser($id);
                 break;
 
-            case 'createUser':
+            case 'createUser': // Создание пользователя по введенным данным
                 $this->requireMethod('POST');
                 $data = $this->getJsonData();
                 if (!isset($data['name'], $data['surname'], $data['email'])) {
@@ -34,11 +37,11 @@ class MainController {
                     $data['name'],
                     $data['surname'],
                     $data['email'],
-                    $data['message'] ?? ''
+                    $data['message']
                 );
                 break;
 
-            case 'updateUser':
+            case 'updateUser': //Изменение пользователя по введенным данным
                 $this->requireMethod('POST');
                 $data = $this->getJsonData();
                 if (!isset($data['id'], $data['name'], $data['surname'], $data['email']) || !is_numeric($data['id'])) {
@@ -50,11 +53,11 @@ class MainController {
                     $data['name'],
                     $data['surname'],
                     $data['email'],
-                    $data['message'] ?? ''
+                    $data['message']
                 );
                 break;
 
-            case 'deleteUser':
+            case 'deleteUser': //Удаление пользователя с проверкой id 
                 $this->requireMethod('POST');
                 $data = $this->getJsonData();
                 if (!isset($data['id']) || !is_numeric($data['id'])) {
@@ -65,11 +68,11 @@ class MainController {
                 break;
 
             //Отзывы
-            case 'getReviews':
+            case 'getReviews': //Получение всех отзывов
                 (new ReviewController())->getReviews();
                 break;
 
-            case 'postReview':
+            case 'postReview': //Добавлние отзыва по введенным значениям с проверкой на наличие имени и комментария
                 $this->requireMethod('POST');
                 $data = $this->getJsonData();
                 if (!isset($data['name'], $data['comment'])) {
@@ -79,7 +82,7 @@ class MainController {
                 (new ReviewController())->postReview($data['name'], $data['comment']);
                 break;
 
-            case 'getOne':
+            case 'getOne': //Получение одного отзыва по айди
                 $id = $_GET['id'] ?? null;
                 if (!$id || !is_numeric($id)) {
                     $this->error(400, 'Неверный ID');
@@ -88,7 +91,7 @@ class MainController {
                 (new ReviewController())->getOne($id);
                 break;
 
-            case 'update':
+            case 'update': // Обновление отзыва по введенным данным с проверкой на ввод
                 $this->requireMethod('POST');
                 $data = $this->getJsonData();
                 if (!isset($data['id'], $data['name'], $data['comment']) || !is_numeric($data['id'])) {
@@ -98,7 +101,7 @@ class MainController {
                 (new ReviewController())->update($data['id'], $data['name'], $data['comment']);
                 break;
 
-            case 'delete':
+            case 'delete': // Удаление отзыва с проверкой айди
                 $this->requireMethod('POST');
                 $data = $this->getJsonData();
                 if (!isset($data['id']) || !is_numeric($data['id'])) {

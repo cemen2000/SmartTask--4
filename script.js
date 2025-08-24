@@ -252,8 +252,6 @@ async function editItem(id, type) {
         e.preventDefault();
         const formData = new FormData(form);
         const payload = Object.fromEntries(formData.entries());
-
-        try {
             const res = await fetch(`/index.php?action=${type === 'reviews' ? 'update' : 'updateUser'}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -269,9 +267,6 @@ async function editItem(id, type) {
             } else {
                 Swal.fire('Ошибка', result.error || 'Не удалось сохранить', 'error');
             }
-        } catch (err) {
-            Swal.fire('Ошибка', 'Сетевая ошибка', 'error');
-        }
     };
 }
 

@@ -1,6 +1,7 @@
 <?php
+namespace Controllers;
 require_once 'Models/Model.php';
-
+use Models\Model;
 class ReviewController {
     private $model;
 
@@ -12,15 +13,15 @@ class ReviewController {
         $this->model->GetRequest();
     }
 
-    public function postReview() {
-        $data = json_decode(file_get_contents('php://input'), true);
-        if (!isset($data['name'], $data['comment'])) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Не указаны имя или отзыв']);
-            exit;
-        }
-        $this->model->PostRequest();
+   public function postReview($name, $comment) {
+    if (!$name || !$comment) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Не указаны имя или отзыв']);
+        exit;
     }
+
+    $this->model->PostRequest($name, $comment);
+}
 
     public function getOne($id) {
         $this->model->getOne($id);
@@ -37,6 +38,7 @@ class ReviewController {
 
     http_response_code(200);
     echo json_encode(['success' => true]);
+    exit;
 }
 
     public function delete($id) {

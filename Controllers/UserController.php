@@ -1,5 +1,7 @@
 <?php
+namespace Controllers;
 require_once 'Models/Model.php';
+use Models\Model;
 
 class UserController {
     private $model;
@@ -31,6 +33,7 @@ class UserController {
 
     http_response_code(200);
     echo json_encode(['success' => true]);
+    exit;
 }
 
     public function deleteUser($id) {
