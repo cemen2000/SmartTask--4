@@ -1,47 +1,29 @@
 <?php
 namespace Controllers;
-require_once 'Models/Model.php';
-use Models\Model;
 class ReviewController {
     private $model;
 
     public function __construct() {
-        $this->model = new Model();
+        $this->model = new \Models\ReviewModel();
     }
 
     public function getReviews() {
-        $this->model->GetRequest();
+        $this->model->getAllReviews();
     }
 
-   public function postReview($name, $comment) {
-    if (!$name || !$comment) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Не указаны имя или отзыв']);
-        exit;
+    public function postReview($name, $comment) {
+        $this->model->createReview($name, $comment);
     }
-
-    $this->model->PostRequest($name, $comment);
-}
 
     public function getOne($id) {
-        $this->model->getOne($id);
+        $this->model->getReviewById($id);
     }
 
     public function update($id, $name, $comment) {
-    if (!$name || !$comment) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Не указано имя или отзыв']);
-        exit;
+        $this->model->updateReview($id, $name, $comment);
     }
 
-    $this->model->update($id, $name, $comment);
-
-    http_response_code(200);
-    echo json_encode(['success' => true]);
-    exit;
-}
-
     public function delete($id) {
-        $this->model->delete($id);
+        $this->model->deleteReview($id);
     }
 }

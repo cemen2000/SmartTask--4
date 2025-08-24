@@ -1,21 +1,17 @@
 <?php
 namespace Controllers;
-require_once 'Models/Model.php';
-use Models\Model;
-
 class UserController {
     private $model;
-
     public function __construct() {
-        $this->model = new Model();
+        $this->model = new \Models\UserModel(); 
     }
 
     public function getUsers() {
-        $this->model->getUsers();
+        $this->model->getAllUsers();
     }
 
     public function getUser($id) {
-        $this->model->getUser($id);
+        $this->model->getUserById($id);
     }
 
     public function createUser($name, $surname, $email, $message) {
@@ -23,18 +19,8 @@ class UserController {
     }
 
     public function updateUser($id, $name, $surname, $email, $message) {
-    if (!$name || !$surname || !$email || !$message) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Не все поля заполнены']);
-        exit;
+        $this->model->updateUser($id, $name, $surname, $email, $message);
     }
-
-    $this->model->updateUser($id, $name, $surname, $email, $message);
-
-    http_response_code(200);
-    echo json_encode(['success' => true]);
-    exit;
-}
 
     public function deleteUser($id) {
         $this->model->deleteUser($id);

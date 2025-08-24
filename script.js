@@ -7,16 +7,16 @@ async function loadItems(type, containerSelector, action) {
         const res = await fetch(`/index.php?action=${action}`);
         const data = await res.json();
 
-        if (!data.success || !Array.isArray(data[type])) return;
+        if (!data.success || !data.data || !Array.isArray(data.data[type])) return;
 
         container.innerHTML = '';
-        data[type].forEach(item => {
+        data.data[type].forEach(item => {
             const id = parseInt(item.id);
             if (isNaN(id)) return;
             container.appendChild(createItem(item, type, id));
         });
     } catch (err) {
-        console.error(`Ошибка загрузки`, err);
+        console.error(`Ошибка загрузки ${type}:`, err);
     }
 }
 
@@ -216,25 +216,36 @@ async function editItem(id, type) {
     const data = await res.json();
 
     if (!data.success) {
-        Swal.fire('Ошибка', data.error, 'error');
+        Swal.fire('Ошибка', data.error || 'Не удалось загрузить данные', 'error');
         return;
     }
 
-    const item = type === 'reviews' ? data.review : data.user;
+    let item;
+    if (data.data && data.data[type === 'reviews' ? 'review' : 'user']) {
+        item = data.data[type === 'reviews' ? 'review' : 'user'];
+    } else if (data[type === 'reviews' ? 'review' : 'user']) {
+        item = data[type === 'reviews' ? 'review' : 'user'];
+    } else {
+        console.error('Не найден элемент для редактирования:', data);
+        Swal.fire('Ошибка', 'Не удалось загрузить данные', 'error');
+        return;
+    }
+
     const parent = document.querySelector(`[data-id="${id}"]`).closest('.review, .user');
 
-    // ЗАГРУЗКА ФОРМЫ
+    // Загрузка формы
     const formRes = await fetch(`/Views/${type === 'reviews' ? 'ReviewLayout/EditReview.php' : 'UserLayout/UserEdit.php'}`);
     const html = await formRes.text();
     const temp = document.createElement('div');
     temp.innerHTML = html;
     const form = temp.querySelector('form');
 
-    // ПОДСТАВЛЕНИЕ ПОЛЕЙ
+    // Подстановка полей
     const idInput = form.querySelector('[name="id"]');
     if (idInput) {
         idInput.value = item.id;
     }
+
     form.querySelector('[name="name"]').value = item.name;
 
     if (type === 'users') {
@@ -247,26 +258,26 @@ async function editItem(id, type) {
 
     parent.replaceWith(form);
 
-    // ОТПРАВКА
+    // Отправка
     form.onsubmit = async e => {
         e.preventDefault();
         const formData = new FormData(form);
         const payload = Object.fromEntries(formData.entries());
-            const res = await fetch(`/index.php?action=${type === 'reviews' ? 'update' : 'updateUser'}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+        const res = await fetch(`/index.php?action=${type === 'reviews' ? 'update' : 'updateUser'}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
 
-            const result = await res.json();
-            if (result.success) {
-                Swal.fire('Готово', 'Обновлено', 'success');
-                loadItems(type === 'reviews' ? 'reviews' : 'users', 
-                          type === 'reviews' ? '.review-container' : '.users-list', 
-                          type === 'reviews' ? 'getReviews' : 'getUsers');
-            } else {
-                Swal.fire('Ошибка', result.error || 'Не удалось сохранить', 'error');
-            }
+        const result = await res.json();
+        if (result.success) {
+            Swal.fire('Готово', 'Обновлено', 'success');
+            loadItems(type === 'reviews' ? 'reviews' : 'users', 
+                      type === 'reviews' ? '.review-container' : '.users-list', 
+                      type === 'reviews' ? 'getReviews' : 'getUsers');
+        } else {
+            Swal.fire('Ошибка', result.error || 'Не удалось сохранить', 'error');
+        }
     };
 }
 

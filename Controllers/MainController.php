@@ -2,8 +2,8 @@
 namespace Controllers;
 use Controllers\UserController;
 use Controllers\ReviewController;
-require_once 'Controllers/ReviewController.php';
-require_once 'Controllers/UserController.php';
+require_once __DIR__ . '/ReviewController.php';
+require_once __DIR__ . '/UserController.php';
 
 class MainController {
     public function handleRequest() {
