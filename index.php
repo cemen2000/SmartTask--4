@@ -9,7 +9,7 @@ if (isset($_GET['action'])) {
     $controller = new Controllers\MainController();
     $controller->handleRequest();
 }
-//если есть параметр action то открывается контроллер обработчик, если action нет то открывается
+//если есть параметр action то открывается контроллер обработчик, если action нет то открывается разметка страницы
 else {
     require_once 'Views/MainLayout/Main.php';
     (new MainLayout\Main())->View();
