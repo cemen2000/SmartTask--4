@@ -9,8 +9,8 @@ if (isset($_GET['action'])) {
     $controller = new Controllers\MainController();
     $controller->handleRequest();
 }
-//если есть параметр action то открывается контроллер обработчик, если action нет то открывается
+//если есть параметр action то открывается контроллер обработчик, если action нет то открывается HTML разметка
 else {
-    require_once 'Views/MainLayout/Main.php';
-    (new MainLayout\Main())->View();
+    require_once 'Controllers/IndexController.php';
+    (new Controllers\IndexController())->View();
 }

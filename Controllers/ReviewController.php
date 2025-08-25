@@ -26,4 +26,5 @@ class ReviewController {
     public function delete($id) {
         $this->model->deleteReview($id);
     }
+    
 }

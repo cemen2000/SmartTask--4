@@ -80,4 +80,6 @@ class UserModel extends Model {
             $this->respond(false, null, 'Пользователь не найден');
         }
     }
+
+    
 }
